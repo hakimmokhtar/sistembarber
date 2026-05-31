@@ -7,31 +7,30 @@ const app = express();
 app.use(cors()); 
 app.use(bodyParser.json());
 
-// 1. Guna createPool (Pastikan DB_PASSWORD dah set kat Render Environment)
 const db = mysql.createPool({
     host: 'mysql-33891d37-barber.l.aivencloud.com',
     port: 13306,
     user: 'avnadmin',      
-    password: process.env.DB_PASSWORD, 
+    password: process.env.DB_PASSWORD, // Ambil dari Render Settings
     database: 'defaultdb',
     ssl: {
         rejectUnauthorized: false
     },
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    connectTimeout: 20000 // Beri masa lebih lama untuk sambungan pertama
 });
 
-// 2. CARA BETUL UNTUK TEST CONNECTION (Guna getConnection, bukan connect)
+// Uji sambungan pool
 db.getConnection((err, connection) => {
     if (err) {
-        console.error('Gagal sambung database: ' + err.message);
+        console.error('DATABASE CONNECT ERROR: ' + err.message);
     } else {
         console.log('Berjaya sambung ke MySQL Database (Pool)!');
-        connection.release(); // Lepaskan balik connection ke pool
+        connection.release();
     }
 });
-
 // 2. Laluan (Route) untuk terima data dari borang HTML (Dah disamakan dengan Workbench kau)
 app.post('/api/bookings', (req, res) => {
     const { nama_pelanggan, no_telefon, barber_id, tarikh, slot_masa } = req.body;
