@@ -8,15 +8,18 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // 1. Sambungkan ke MySQL Database Aiven (Dah ditambah Port & SSL)
-const db = mysql.createConnection({
+const db = mysql.createPool({
     host: 'mysql-33891d37-barber.l.aivencloud.com',
-    port: 13306, // <--- WAJIB UNTUK AIVEN
+    port: 13306,
     user: 'avnadmin',      
-    password: 'process.env.DB_PASSWORD', 
+    password: process.env.DB_PASSWORD, // <--- Dia akan ambil dari Render Environment tadi
     database: 'defaultdb',
     ssl: {
-        rejectUnauthorized: false // <--- WAJIB UNTUK SECURITY AIVEN
-    }
+        rejectUnauthorized: false
+    },
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
 db.connect((err) => {
