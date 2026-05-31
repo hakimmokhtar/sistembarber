@@ -7,30 +7,19 @@ const app = express();
 app.use(cors()); 
 app.use(bodyParser.json());
 
-const db = mysql.createPool({
-    host: 'mysql-33891d37-barber.l.aivencloud.com',
-    port: 13306,
-    user: 'avnadmin',      
-    password: process.env.DB_PASSWORD, // Ambil dari Render Settings
-    database: 'defaultdb',
-    ssl: {
-        rejectUnauthorized: false
-    },
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-    connectTimeout: 20000 // Beri masa lebih lama untuk sambungan pertama
-});
+// Ganti password secara manual untuk test (kalau env masih buat hal)
+const db = mysql.createPool('mysql://avnadmin:AVNS_FBYlNvXrV1JOJpAw6-P@mysql-33891d37-barber.l.aivencloud.com:13306/defaultdb?ssl={"rejectUnauthorized":false}');
 
-// Uji sambungan pool
-db.getConnection((err, connection) => {
+// Test sambungan
+db.getConnection((err, conn) => {
     if (err) {
-        console.error('DATABASE CONNECT ERROR: ' + err.message);
+        console.error("❌ MASIH GAGAL: ", err.message);
     } else {
-        console.log('Berjaya sambung ke MySQL Database (Pool)!');
-        connection.release();
+        console.log("✅ AKHIRNYA BERJAYA SAMBUNG!");
+        conn.release();
     }
 });
+
 // 2. Laluan (Route) untuk terima data dari borang HTML (Dah disamakan dengan Workbench kau)
 app.post('/api/bookings', (req, res) => {
     const { nama_pelanggan, no_telefon, barber_id, tarikh, slot_masa } = req.body;
@@ -65,5 +54,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server backend berjalan di port ${PORT}`);
 });
-
-// test update 1
