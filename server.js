@@ -12,7 +12,7 @@ const db = mysql.createConnection({
     host: 'mysql-33891d37-barber.l.aivencloud.com',
     port: 13306, // <--- WAJIB UNTUK AIVEN
     user: 'avnadmin',      
-    password: 'AVNS_FBYlNvXrV1JOJpAw6-P', 
+    password: 'process.env.DB_PASSWORD', 
     database: 'defaultdb',
     ssl: {
         rejectUnauthorized: false // <--- WAJIB UNTUK SECURITY AIVEN
