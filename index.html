@@ -104,14 +104,13 @@
         document.getElementById('bookingForm').addEventListener('submit', async (e) => {
             e.preventDefault(); // Supaya page tak refresh masa klik butang
 
-            // 1. Ambil data dari input borang
+// Pastikan nama sebelah kiri SEBIJI sama dengan apa yang server.js terima
             const dataBooking = {
                 nama_pelanggan: document.getElementById('nama').value,
                 no_telefon: document.getElementById('telefon').value,
-                barber_id: parseInt(document.getElementById('barber').value),
-                servis_id: parseInt(document.getElementById('servis').value),
+                barber_id: document.getElementById('barber').value, // Kita hantar sebagai string/nama
                 tarikh: document.getElementById('tarikh').value,
-                slot_masa: document.getElementById('masa').value + ":00" // Format HH:MM:SS untuk MySQL
+                slot_masa: document.getElementById('masa').value
             };
 
             console.log("Menghantar data:", dataBooking); // Untuk kita check kat console

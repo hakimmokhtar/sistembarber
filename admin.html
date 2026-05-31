@@ -34,24 +34,26 @@
             </tbody>
     </table>
 
-    <script>
+<script>
         async function ambilData() {
             try {
-                const resp = await fetch('https://sistembarber.onrender.com/api/bookings');
+                // 1. Link mesti kena dengan route kat server.js (ada /admin)
+                const resp = await fetch('https://sistembarber.onrender.com/api/admin/bookings');
                 const data = await resp.json();
                 
                 const tableBody = document.getElementById('bookingTable');
-                tableBody.innerHTML = ''; // Kosongkan jadual dulu
+                tableBody.innerHTML = ''; 
 
                 data.forEach(book => {
+                    // 2. Nama variable mesti sama dengan column kat Workbench (nama, masa, dll)
                     const row = `<tr>
-                        <td>${book.nama_pelanggan}</td>
+                        <td>${book.nama}</td>
                         <td>${book.no_telefon}</td>
-                        <td>${book.nama_barber}</td>
-                        <td>${book.nama_servis}</td>
+                        <td>${book.barber}</td>
+                        <td>Gunting Rambut</td> 
                         <td>${new Date(book.tarikh).toLocaleDateString()}</td>
-                        <td>${book.slot_masa}</td>
-                        <td><span class="status pending">${book.status_booking}</span></td>
+                        <td>${book.masa}</td>
+                        <td><span class="status pending">Selesai</span></td>
                     </tr>`;
                     tableBody.innerHTML += row;
                 });
@@ -60,10 +62,9 @@
             }
         }
 
-        // Jalankan fungsi ambilData bila page dibuka
         ambilData();
-        // Refresh data setiap 30 saat secara automatik
         setInterval(ambilData, 30000);
     </script>
+    
 </body>
 </html>

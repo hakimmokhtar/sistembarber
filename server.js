@@ -29,18 +29,15 @@ db.connect((err) => {
 
 // 2. Laluan (Route) untuk terima data dari borang HTML (Dah disamakan dengan Workbench kau)
 app.post('/api/bookings', (req, res) => {
-    // Dipetakan daripada frontend ke nama variable
     const { nama_pelanggan, no_telefon, barber_id, tarikh, slot_masa } = req.body;
 
-    // Disamakan dengan nama table 'bookings' (ada s) dan column mengikut Workbench kau
-    const query = `INSERT INTO bookings (nama, no_telefon, barber, tarikh, masa) 
-                   VALUES (?, ?, ?, ?, ?)`;
+    // Pastikan susunan ?,?,?,?,? sama dengan data di bawah
+    const query = `INSERT INTO bookings (nama, no_telefon, barber, tarikh, masa) VALUES (?, ?, ?, ?, ?)`;
 
-    // Ambil perhatian: barber_id diletakkan pada column 'barber' mengikut susunan Workbench kau
     db.query(query, [nama_pelanggan, no_telefon, barber_id, tarikh, slot_masa], (err, result) => {
         if (err) {
-            console.error(err);
-            return res.status(500).json({ success: false, message: 'Gagal simpan tempahan' });
+            console.error("DATABASE ERROR:", err);
+            return res.status(500).json({ success: false, message: err.message });
         }
         res.json({ success: true, message: 'Tempahan berjaya disimpan!' });
     });
