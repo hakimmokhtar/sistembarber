@@ -37,7 +37,7 @@
     <script>
         async function ambilData() {
             try {
-                const resp = await fetch('http://localhost:3000/api/admin/bookings');
+                const resp = await fetch('https://sistembarber.onrender.com');
                 const data = await resp.json();
                 
                 const tableBody = document.getElementById('bookingTable');
