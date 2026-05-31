@@ -2,11 +2,9 @@ const express = require('express');
 const cors = require('cors');
 app.use(cors()); // Ini akan benarkan mana-mana asal (origin) untuk request data
 const mysql = require('mysql2');
-const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-app.use(cors());
 app.use(bodyParser.json());
 
 // 1. Sambungkan ke MySQL Database kau
