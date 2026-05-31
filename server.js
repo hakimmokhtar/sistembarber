@@ -24,7 +24,7 @@ db.connect((err) => {
 });
 
 // 2. Laluan (Route) untuk terima data dari borang HTML
-app.post('/api/booking', (req, res) => {
+app.post('/api/bookings', (req, res) => {
     const { nama_pelanggan, no_telefon, barber_id, servis_id, tarikh, slot_masa } = req.body;
 
     const query = `INSERT INTO booking (nama_pelanggan, no_telefon, barber_id, servis_id, tarikh, slot_masa) 
