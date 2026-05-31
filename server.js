@@ -7,19 +7,19 @@ const app = express();
 app.use(cors()); 
 app.use(bodyParser.json());
 
-// Ganti password secara manual untuk test (kalau env masih buat hal)
-const db = mysql.createPool('mysql://avnadmin:AVNS_FBYlNvXrV1JOJpAw6-P@mysql-33891d37-barber.l.aivencloud.com:13306/defaultdb?ssl={"rejectUnauthorized":false}');
+
+// Ganti kod db pool kau dengan URL dari Railway tadi
+const db = mysql.createPool('mysql://root:GryyxyzwLNvmWnHgDNUuGSpcCmNrmZlz@mysql.railway.internal:3306/railway');
 
 // Test sambungan
 db.getConnection((err, conn) => {
     if (err) {
-        console.error("❌ MASIH GAGAL: ", err.message);
+        console.error("❌ RAILWAY GAGAL: ", err.message);
     } else {
-        console.log("✅ AKHIRNYA BERJAYA SAMBUNG!");
+        console.log("✅ BERJAYA SAMBUNG KE RAILWAY!");
         conn.release();
     }
 });
-
 // 2. Laluan (Route) untuk terima data dari borang HTML (Dah disamakan dengan Workbench kau)
 app.post('/api/bookings', (req, res) => {
     const { nama_pelanggan, no_telefon, barber_id, tarikh, slot_masa } = req.body;
