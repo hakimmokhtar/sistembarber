@@ -4,6 +4,8 @@ const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const app = express();
 
+app.use(express.static(__dirname)); 
+// Baris ni suruh Express cari fail (macam admin.html) dalam folder utama projek kau.
 app.use(cors()); 
 app.use(bodyParser.json());
 
@@ -36,17 +38,16 @@ app.post('/api/bookings', (req, res) => {
     });
 });
 
-// 3. Laluan (Route) untuk Admin ambil semua senarai booking (Dipermudahkan mengikut table bookings kau)
 app.get('/api/admin/bookings', (req, res) => {
-    // Query diubah suai mengikut satu table 'bookings' yang kau buat kat Workbench
-    const query = 'SELECT * FROM bookings ORDER BY tarikh DESC, masa DESC';
+    // Pastikan "FROM bookings" bukan nama table lama
+    const query = `SELECT id, nama, no_telefon, barber, tarikh, masa FROM bookings ORDER BY tarikh DESC, masa DESC`;
 
     db.query(query, (err, results) => {
         if (err) {
-            console.error("Gagal ambil data admin:", err);
-            return res.status(500).json({ success: false, error: err.message });
+            console.error(err);
+            return res.status(500).json({ success: false, message: 'Gagal ambil data' });
         }
-        res.json(results); // Ini akan hantar data ke Admin Dashboard
+        res.json(results);
     });
 });
 
