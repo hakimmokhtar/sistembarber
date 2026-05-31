@@ -117,7 +117,7 @@
 
             try {
                 // 2. Hantar data ke Server Backend (API)
-                const response = await fetch('https://sistembarber-1.onrender.com', {
+                const response = await fetch('https://sistembarber-1.onrender.com/api/bookings', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dataBooking)
