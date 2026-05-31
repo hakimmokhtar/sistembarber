@@ -9,10 +9,10 @@ app.use(bodyParser.json());
 
 // 1. Sambungkan ke MySQL Database kau
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',      // Username MySQL kau
-    password: 'Hakim.061298', // ⚠️ TUKAR KEPADA PASSWORD MYSQL KAU
-    database: 'mvp_barber'
+    host: 'mysql-33891d37-barber.l.aivencloud.com',
+    user: 'avnadmin',      // Username MySQL kau
+    password: 'AVNS_FBYlNvXrV1JOJpAw6-P', // ⚠️ TUKAR KEPADA PASSWORD MYSQL KAU
+    database: 'defaultdb'
 });
 
 db.connect((err) => {
