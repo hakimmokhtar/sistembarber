@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 
 
 // Ganti kod db pool kau dengan URL dari Railway tadi
-const db = mysql.createPool('mysql://root:GryyxyzwLNvmWnHgDNUuGSpcCmNrmZlz@zephyr.proxy.rlwy.net:56034/railway');
+const db = mysql.createPool('mysql://root:zPHrkTMEdRxBGHtsJyBuwtmxLpEkEDpw@zephyr.proxy.rlwy.net:12817/railway');
 
 // Test sambungan
 db.getConnection((err, conn) => {
