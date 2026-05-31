@@ -7,12 +7,12 @@ const app = express();
 app.use(cors()); 
 app.use(bodyParser.json());
 
-// 1. Sambungkan ke MySQL Database Aiven (Dah ditambah Port & SSL)
+// 1. Guna createPool (Pastikan DB_PASSWORD dah set kat Render Environment)
 const db = mysql.createPool({
     host: 'mysql-33891d37-barber.l.aivencloud.com',
     port: 13306,
     user: 'avnadmin',      
-    password: process.env.DB_PASSWORD, // <--- Dia akan ambil dari Render Environment tadi
+    password: process.env.DB_PASSWORD, 
     database: 'defaultdb',
     ssl: {
         rejectUnauthorized: false
@@ -22,12 +22,14 @@ const db = mysql.createPool({
     queueLimit: 0
 });
 
-db.connect((err) => {
+// 2. CARA BETUL UNTUK TEST CONNECTION (Guna getConnection, bukan connect)
+db.getConnection((err, connection) => {
     if (err) {
-        console.error('Gagal sambung database: ' + err.stack);
-        return;
+        console.error('Gagal sambung database: ' + err.message);
+    } else {
+        console.log('Berjaya sambung ke MySQL Database (Pool)!');
+        connection.release(); // Lepaskan balik connection ke pool
     }
-    console.log('Berjaya sambung ke MySQL Database!');
 });
 
 // 2. Laluan (Route) untuk terima data dari borang HTML (Dah disamakan dengan Workbench kau)
