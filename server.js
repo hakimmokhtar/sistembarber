@@ -39,14 +39,14 @@ app.post('/api/bookings', (req, res) => {
 // 3. Laluan (Route) untuk Admin ambil semua senarai booking (Dipermudahkan mengikut table bookings kau)
 app.get('/api/admin/bookings', (req, res) => {
     // Query diubah suai mengikut satu table 'bookings' yang kau buat kat Workbench
-    const query = `SELECT id, nama_pelanggan, no_telefon, barber, tarikh, masa FROM bookings ORDER BY tarikh DESC, masa DESC`;
+    const query = 'SELECT * FROM bookings ORDER BY tarikh DESC, masa DESC';
 
     db.query(query, (err, results) => {
         if (err) {
-            console.error(err);
-            return res.status(500).json({ success: false, message: 'Gagal ambil data' });
+            console.error("Gagal ambil data admin:", err);
+            return res.status(500).json({ success: false, error: err.message });
         }
-        res.json(results);
+        res.json(results); // Ini akan hantar data ke Admin Dashboard
     });
 });
 
