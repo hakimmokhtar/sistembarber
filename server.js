@@ -4,15 +4,19 @@ const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const app = express();
 
-app.use(cors()); // Ini akan benarkan mana-mana asal (origin) untuk request data
+app.use(cors()); 
 app.use(bodyParser.json());
 
-// 1. Sambungkan ke MySQL Database kau
+// 1. Sambungkan ke MySQL Database Aiven (Dah ditambah Port & SSL)
 const db = mysql.createConnection({
     host: 'mysql-33891d37-barber.l.aivencloud.com',
-    user: 'avnadmin',      // Username MySQL kau
-    password: 'AVNS_FBYlNvXrV1JOJpAw6-P', // ⚠️ TUKAR KEPADA PASSWORD MYSQL KAU
-    database: 'defaultdb'
+    port: 13306, // <--- WAJIB UNTUK AIVEN
+    user: 'avnadmin',      
+    password: 'AVNS_FBYlNvXrV1JOJpAw6-P', 
+    database: 'defaultdb',
+    ssl: {
+        rejectUnauthorized: false // <--- WAJIB UNTUK SECURITY AIVEN
+    }
 });
 
 db.connect((err) => {
@@ -23,14 +27,17 @@ db.connect((err) => {
     console.log('Berjaya sambung ke MySQL Database!');
 });
 
-// 2. Laluan (Route) untuk terima data dari borang HTML
+// 2. Laluan (Route) untuk terima data dari borang HTML (Dah disamakan dengan Workbench kau)
 app.post('/api/bookings', (req, res) => {
-    const { nama_pelanggan, no_telefon, barber_id, servis_id, tarikh, slot_masa } = req.body;
+    // Dipetakan daripada frontend ke nama variable
+    const { nama_pelanggan, no_telefon, barber_id, tarikh, slot_masa } = req.body;
 
-    const query = `INSERT INTO booking (nama_pelanggan, no_telefon, barber_id, servis_id, tarikh, slot_masa) 
-                   VALUES (?, ?, ?, ?, ?, ?)`;
+    // Disamakan dengan nama table 'bookings' (ada s) dan column mengikut Workbench kau
+    const query = `INSERT INTO bookings (nama, no_telefon, barber, tarikh, masa) 
+                   VALUES (?, ?, ?, ?, ?)`;
 
-    db.query(query, [nama_pelanggan, no_telefon, barber_id, servis_id, tarikh, slot_masa], (err, result) => {
+    // Ambil perhatian: barber_id diletakkan pada column 'barber' mengikut susunan Workbench kau
+    db.query(query, [nama_pelanggan, no_telefon, barber_id, tarikh, slot_masa], (err, result) => {
         if (err) {
             console.error(err);
             return res.status(500).json({ success: false, message: 'Gagal simpan tempahan' });
@@ -39,17 +46,10 @@ app.post('/api/bookings', (req, res) => {
     });
 });
 
-// Run server kat port 3000
-
-// 3. Laluan (Route) untuk Admin ambil semua senarai booking
+// 3. Laluan (Route) untuk Admin ambil semua senarai booking (Dipermudahkan mengikut table bookings kau)
 app.get('/api/admin/bookings', (req, res) => {
-    const query = `
-        SELECT b.id, b.nama_pelanggan, b.no_telefon, br.nama AS nama_barber, 
-               s.nama_servis, b.tarikh, b.slot_masa, b.status_booking
-        FROM booking b
-        JOIN barber br ON b.barber_id = br.id
-        JOIN servis s ON b.servis_id = s.id
-        ORDER BY b.tarikh DESC, b.slot_masa DESC`;
+    // Query diubah suai mengikut satu table 'bookings' yang kau buat kat Workbench
+    const query = `SELECT id, nama, no_telefon, barber, tarikh, masa FROM bookings ORDER BY tarikh DESC, masa DESC`;
 
     db.query(query, (err, results) => {
         if (err) {
@@ -60,7 +60,6 @@ app.get('/api/admin/bookings', (req, res) => {
     });
 });
 
-// Tukar bahagian app.listen kepada ini
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server backend berjalan di port ${PORT}`);
