@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Tempahan Barbershop</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #1e1e24; 
+            color: #fff;
+            padding: 20px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .booking-box { 
+            width: 100%;
+            max-width: 450px; 
+            background: #2a2a35; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0px 8px 24px rgba(0,0,0,0.3); 
+        }
+        h2 { 
+            text-align: center; 
+            color: #ffb703; 
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        label { 
+            font-weight: 600; 
+            display: block; 
+            margin-top: 15px; 
+            color: #ccc;
+        }
+        input, select, button { 
+            width: 100%; 
+            padding: 12px; 
+            margin-top: 6px; 
+            border-radius: 6px; 
+            border: 1px solid #444; 
+            background: #1e1e24;
+            color: #fff;
+            box-sizing: border-box; 
+            font-size: 14px;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #ffb703;
+        }
+        button { 
+            background: #ffb703; 
+            color: #1e1e24; 
+            border: none; 
+            font-size: 16px; 
+            font-weight: bold;
+            cursor: pointer; 
+            margin-top: 25px; 
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        button:hover { 
+            background: #fb8500; 
+        }
+    </style>
+</head>
+<body>
+
+<div class="booking-box">
+    <h2>Barber Booking System</h2>
+    <form id="bookingForm">
+        <label>Nama Pelanggan:</label>
+        <input type="text" id="nama" placeholder="Masukkan nama anda" required>
+
+        <label>No. Telefon:</label>
+        <input type="tel" id="telefon" placeholder="Contoh: 0123456789" required>
+
+        <label>Pilih Barber (Tukang Gunting):</label>
+        <select id="barber">
+            <option value="1">Barber Asyraf (Sifu)</option>
+            <option value="2">Barber Danial (Junior)</option>
+        </select>
+
+        <label>Pilih Jenis Servis:</label>
+        <select id="servis">
+            <option value="1">Gunting Rambut Biasa (RM15)</option>
+            <option value="2">Pakej Gunting + Cuci (RM25)</option>
+            <option value="3">Potong Janggut / Jambang (RM10)</option>
+        </select>
+
+        <label>Tarikh & Masa:</label>
+        <input type="date" id="tarikh" required>
+        <input type="time" id="masa" required>
+
+        <button type="submit">Sahkan Tempahan</button>
+    </form>
+</div>
+
+<script>
+        document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Supaya page tak refresh masa klik butang
+
+            // 1. Ambil data dari input borang
+            const dataBooking = {
+                nama_pelanggan: document.getElementById('nama').value,
+                no_telefon: document.getElementById('telefon').value,
+                barber_id: parseInt(document.getElementById('barber').value),
+                servis_id: parseInt(document.getElementById('servis').value),
+                tarikh: document.getElementById('tarikh').value,
+                slot_masa: document.getElementById('masa').value + ":00" // Format HH:MM:SS untuk MySQL
+            };
+
+            console.log("Menghantar data:", dataBooking); // Untuk kita check kat console
+
+            try {
+                // 2. Hantar data ke Server Backend (API)
+                const response = await fetch('http://localhost:3000/api/booking', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dataBooking)
+                });
+
+                const result = await response.json();
+
+                // 3. Respon kepada pengguna
+                if (result.success) {
+                    alert('🎉 ' + result.message);
+                    document.getElementById('bookingForm').reset(); // Kosongkan borang semula
+                } else {
+                    alert('❌ Gagal: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Gagal menyambung ke server backend. Pastikan server.js tengah RUN!');
+            }
+        });
+    </script>
+    
+</body>
+</html>
