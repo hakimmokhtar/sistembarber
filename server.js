@@ -9,7 +9,6 @@ app.use(express.static(__dirname));
 app.use(cors()); 
 app.use(bodyParser.json());
 
-
 // Ganti kod db pool kau dengan URL dari Railway tadi
 const db = mysql.createPool('mysql://root:zPHrkTMEdRxBGHtsJyBuwtmxLpEkEDpw@zephyr.proxy.rlwy.net:12817/railway');
 
@@ -54,20 +53,4 @@ app.get('/api/admin/bookings', (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server backend berjalan di port ${PORT}`);
-});
-
-// API untuk kemaskini status booking
-app.put('/api/admin/bookings/:id', (req, res) => {
-    const bookingId = req.params.id;
-    const statusBaru = req.body.status; // Contoh: 'Selesai'
-
-    const query = `UPDATE bookings SET status = ? WHERE id = ?`;
-    
-    db.query(query, [statusBaru, bookingId], (err, result) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ success: false, message: 'Gagal kemaskini status' });
-        }
-        res.json({ success: true, message: 'Status berjaya dikemaskini!' });
-    });
 });

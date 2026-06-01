@@ -2,72 +2,59 @@
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Barber</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #121212; color: white; padding: 20px; }
+        body { font-family: sans-serif; background: #121212; color: white; padding: 40px; }
         h1 { color: #ffb703; text-align: center; }
-        .container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #1e1e24; min-width: 800px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #1e1e24; }
         th, td { padding: 15px; border: 1px solid #333; text-align: left; }
-        th { background: #ffb703; color: #1e1e24; text-transform: uppercase; font-size: 14px; }
+        th { background: #ffb703; color: #1e1e24; }
         tr:hover { background: #2a2a35; }
-        .btn-setel { background-color: #28a745; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; }
-        .btn-setel:hover { background-color: #218838; }
-        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; }
+        .status { padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .pending { background: #fb8500; color: white; }
     </style>
 </head>
 <body>
 
     <h1>Senarai Tempahan Pelanggan</h1>
     
-    <div class="container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Nama</th>
-                    <th>Telefon</th>
-                    <th>Barber</th>
-                    <th>Servis</th>
-                    <th>Tarikh</th>
-                    <th>Masa</th>
-                    <th>Status</th>
-                    <th>Tindakan</th>
-                </tr>
-            </thead>
-            <tbody id="bookingTable">
-                </tbody>
-        </table>
-    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Nama</th>
+                <th>Telefon</th>
+                <th>Barber</th>
+                <th>Servis</th>
+                <th>Tarikh</th>
+                <th>Masa</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="bookingTable">
+            </tbody>
+    </table>
 
-    <script>
+<script>
         async function ambilData() {
             try {
-                const resp = await fetch("https://sistembarber-1.onrender.com/api/admin/bookings");
+                // 1. Link mesti kena dengan route kat server.js (ada /admin)
+                const resp = await fetch('https://sistembarber-1.onrender.com/api/admin/bookings');
                 const data = await resp.json();
                 
                 const tableBody = document.getElementById('bookingTable');
                 tableBody.innerHTML = ''; 
 
-                data.forEach(booking => {
-                    let warnaStatus = booking.status === 'Pending' ? '#fb8500' : '#28a745';
-                    
-                    // Pembetulan: Gunakan template literals (backticks) untuk HTML di dalam logic
-                    const buttonHtml = booking.status === 'Pending' 
-                        ? `<button onclick="tukarStatus('${booking.id}', 'Selesai')" class="btn-setel">Selesai</button>` 
-                        : `<span style="color: #28a745;">✅ Setel</span>`;
-
+                data.forEach(book => {
+                    // 2. Nama variable mesti sama dengan column kat Workbench (nama, masa, dll)
                     const row = `<tr>
-                        <td>${booking.nama}</td>
-                        <td>${booking.no_telefon}</td>
-                        <td>${booking.barber}</td>
-                        <td>${booking.servis || '-'}</td>
-                        <td>${booking.tarikh}</td>
-                        <td>${booking.masa}</td>
-                        <td style="color: ${warnaStatus}; font-weight: bold;">${booking.status}</td>
-                        <td>${buttonHtml}</td>
+                        <td>${book.nama}</td>
+                        <td>${book.no_telefon}</td>
+                        <td>${book.barber}</td>
+                        <td>Gunting Rambut</td> 
+                        <td>${new Date(book.tarikh).toLocaleDateString()}</td>
+                        <td>${book.masa}</td>
+                        <td><span class="status pending">Selesai</span></td>
                     </tr>`;
-                    
                     tableBody.innerHTML += row;
                 });
             } catch (err) {
@@ -75,29 +62,7 @@
             }
         }
 
-        // Fungsi untuk tukar status (Pastikan API anda menyokong ini)
-        async function tukarStatus(id, statusBaru) {
-            if(!confirm("Tukar status kepada Selesai?")) return;
-
-            try {
-                const resp = await fetch(`https://sistembarber-1.onrender.com/api/admin/bookings/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: statusBaru })
-                });
-
-                if(resp.ok) {
-                    ambilData(); // Refresh table
-                } else {
-                    alert("Gagal mengemaskini status.");
-                }
-            } catch (err) {
-                console.error("Error:", err);
-            }
-        }
-
         ambilData();
-        // Refresh setiap 30 saat
         setInterval(ambilData, 30000);
     </script>
     
