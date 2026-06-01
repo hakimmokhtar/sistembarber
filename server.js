@@ -55,3 +55,19 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server backend berjalan di port ${PORT}`);
 });
+
+// API untuk kemaskini status booking
+app.put('/api/admin/bookings/:id', (req, res) => {
+    const bookingId = req.params.id;
+    const statusBaru = req.body.status; // Contoh: 'Selesai'
+
+    const query = `UPDATE bookings SET status = ? WHERE id = ?`;
+    
+    db.query(query, [statusBaru, bookingId], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ success: false, message: 'Gagal kemaskini status' });
+        }
+        res.json({ success: true, message: 'Status berjaya dikemaskini!' });
+    });
+});
