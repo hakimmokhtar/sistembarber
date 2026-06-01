@@ -44,25 +44,31 @@
                 const tableBody = document.getElementById('bookingTable');
                 tableBody.innerHTML = ''; 
 
-                data.forEach(booking => {
-                    // Tentukan warna font mengikut status (Psikologi UI)
-                    let warnaStatus = booking.status === 'Pending' ? 'orange' : 'green';
+data.forEach(booking => {
+    // 1. Guna 'Pending' sebagai penyelamat jika data lama tiada kolum status
+    const statusSemasa = booking.status ? booking.status : 'Pending';
+    let warnaStatus = statusSemasa === 'Pending' ? 'orange' : 'green';
 
-                    const row = `<tr>
-                    <td>${booking.nama}</td>
-                    <td>${booking.no_telefon}</td>
-                    <td>${booking.barber}</td>
-                    <td>${booking.tarikh}</td>
-                    <td>${booking.masa}</td>
-                    <td style="color: ${warnaStatus}; font-weight: bold;">${booking.status}</td>
-                    <td>
-                        ${booking.status === 'Pending' ? 
-                            <button onclick="tukarStatus(${booking.id}, 'Selesai')" style="background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">Selesai</button> 
-                            : 
-                            `<span>✅ Setel</span>`
-                    }
-            </td>
-        </tr>`;
+    // 2. Formatkan tarikh supaya tidak keluar panjang (ambil YYYY-MM-DD sahaja)
+    const tarikhSaja = booking.tarikh ? booking.tarikh.split('T')[0] : '';
+
+    // 3. Kita buang kolum 'servis' dalam JavaScript buat sementara waktu 
+    //    sebab dalam database JSON kau memang tak wujud lagi data servis tu.
+    const row = `<tr>
+        <td>${booking.nama}</td>
+        <td>${booking.no_telefon}</td>
+        <td>${booking.barber}</td>
+        <td>${tarikhSaja}</td>
+        <td>${booking.masa}</td>
+        <td style="color: ${warnaStatus}; font-weight: bold;">${statusSemasa}</td>
+        <td>
+            ${statusSemasa === 'Pending' ? 
+                `<button onclick="tukarStatus(${booking.id}, 'Selesai')" style="background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">Selesai</button>` 
+                : 
+                `<span>✅ Setel</span>`
+            }
+        </td>
+    </tr>`;
     
     tableBody.innerHTML += row;
 });
