@@ -38,7 +38,7 @@
         async function ambilData() {
             try {
                 // 1. Link mesti kena dengan route kat server.js (ada /admin)
-                const resp = await fetch('https://sistembarber-1.onrender.com/api/admin/bookings');
+                const resp = await fetch('https://sistembarber-1.onrender.com/admin.html');
                 const data = await resp.json();
                 
                 const tableBody = document.getElementById('bookingTable');
