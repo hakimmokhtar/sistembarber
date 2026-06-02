@@ -39,7 +39,7 @@ app.post('/api/bookings', (req, res) => {
 
 app.get('/api/admin/bookings', (req, res) => {
     // Pastikan "FROM bookings" bukan nama table lama
-    const query = `SELECT id, nama, no_telefon, barber, tarikh, masa FROM bookings ORDER BY tarikh DESC, masa DESC`;
+    const query = `SELECT id, nama, no_telefon, barber, tarikh, masa FROM bookings ORDER BY tarikh ASC, masa ASC`;
 
     db.query(query, (err, results) => {
         if (err) {
