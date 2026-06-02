@@ -50,6 +50,22 @@ app.get('/api/admin/bookings', (req, res) => {
     });
 });
 
+// TAMBAH KOD NI: Ini "otak" untuk butang kemaskini status
+app.put('/api/admin/bookings/:id', (req, res) => {
+    const bookingId = req.params.id;
+    const statusBaru = req.body.status; // Ini akan terima perkataan 'Selesai'
+
+    const query = `UPDATE bookings SET status = ? WHERE id = ?`;
+    
+    db.query(query, [statusBaru, bookingId], (err, result) => {
+        if (err) {
+            console.error("Gagal update Railway:", err);
+            return res.status(500).json({ success: false, message: 'Gagal kemaskini database' });
+        }
+        res.json({ success: true, message: 'Status berjaya ditukar!' });
+    });
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server backend berjalan di port ${PORT}`);
