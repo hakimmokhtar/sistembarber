@@ -53,15 +53,26 @@ app.get('/api/admin/bookings', (req, res) => {
 // TAMBAH KOD NI: Ini "otak" untuk butang kemaskini status
 app.put('/api/admin/bookings/:id', (req, res) => {
     const bookingId = req.params.id;
-    const statusBaru = req.body.status; // Ini akan terima perkataan 'Selesai'
+    const statusBaru = req.body.status;
+
+    // Tambah log ni untuk tengok kat Render Logs apa data yang sampai
+    console.log(`Cuba kemaskini ID: ${bookingId} kepada Status: ${statusBaru}`);
 
     const query = `UPDATE bookings SET status = ? WHERE id = ?`;
     
     db.query(query, [statusBaru, bookingId], (err, result) => {
         if (err) {
             console.error("Gagal update Railway:", err);
-            return res.status(500).json({ success: false, message: 'Gagal kemaskini database' });
+            return res.status(500).json({ success: false, message: err.message });
         }
+
+        // result.affectedRows akan bagitahu berapa baris dalam DB yang betul-betul berubah
+        if (result.affectedRows === 0) {
+            console.log("⚠️ Tiada baris dikemaskini. ID mungkin salah.");
+            return res.json({ success: false, message: 'ID tempahan tidak dijumpai' });
+        }
+
+        console.log("✅ Berjaya kemaskini database!");
         res.json({ success: true, message: 'Status berjaya ditukar!' });
     });
 });
