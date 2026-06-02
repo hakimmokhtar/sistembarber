@@ -2,68 +2,141 @@
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard - Barber</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Tempahan Barbershop</title>
     <style>
-        body { font-family: sans-serif; background: #121212; color: white; padding: 40px; }
-        h1 { color: #ffb703; text-align: center; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #1e1e24; }
-        th, td { padding: 15px; border: 1px solid #333; text-align: left; }
-        th { background: #ffb703; color: #1e1e24; }
-        tr:hover { background: #2a2a35; }
-        .status { padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-        .pending { background: #fb8500; color: white; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #1e1e24; 
+            color: #fff;
+            padding: 20px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .booking-box { 
+            width: 100%;
+            max-width: 450px; 
+            background: #2a2a35; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0px 8px 24px rgba(0,0,0,0.3); 
+        }
+        h2 { 
+            text-align: center; 
+            color: #ffb703; 
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        label { 
+            font-weight: 600; 
+            display: block; 
+            margin-top: 15px; 
+            color: #ccc;
+        }
+        input, select, button { 
+            width: 100%; 
+            padding: 12px; 
+            margin-top: 6px; 
+            border-radius: 6px; 
+            border: 1px solid #444; 
+            background: #1e1e24;
+            color: #fff;
+            box-sizing: border-box; 
+            font-size: 14px;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #ffb703;
+        }
+        button { 
+            background: #ffb703; 
+            color: #1e1e24; 
+            border: none; 
+            font-size: 16px; 
+            font-weight: bold;
+            cursor: pointer; 
+            margin-top: 25px; 
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        button:hover { 
+            background: #fb8500; 
+        }
     </style>
 </head>
 <body>
 
-    <h1>Senarai Tempahan Pelanggan</h1>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>Nama</th>
-                <th>Telefon</th>
-                <th>Barber</th>
-                <th>Servis</th>
-                <th>Tarikh</th>
-                <th>Masa</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody id="bookingTable">
-            </tbody>
-    </table>
+<div class="booking-box">
+    <h2>Barber Booking System</h2>
+    <form id="bookingForm">
+        <label>Nama Pelanggan:</label>
+        <input type="text" id="nama" placeholder="Masukkan nama anda" required>
+
+        <label>No. Telefon:</label>
+        <input type="tel" id="telefon" placeholder="Contoh: 0123456789" required>
+
+        <label>Pilih Barber (Tukang Gunting):</label>
+        <select id="barber">
+            <option value="1">Barber Asyraf (Sifu)</option>
+            <option value="2">Barber Danial (Junior)</option>
+        </select>
+
+        <label>Pilih Jenis Servis:</label>
+        <select id="servis">
+            <option value="1">Gunting Rambut Biasa (RM15)</option>
+            <option value="2">Pakej Gunting + Cuci (RM25)</option>
+            <option value="3">Potong Janggut / Jambang (RM10)</option>
+        </select>
+
+        <label>Tarikh & Masa:</label>
+        <input type="date" id="tarikh" required>
+        <input type="time" id="masa" required>
+
+        <button type="submit">Sahkan Tempahan</button>
+    </form>
+</div>
 
 <script>
-        async function ambilData() {
+        document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Supaya page tak refresh masa klik butang
+
+// Pastikan nama sebelah kiri SEBIJI sama dengan apa yang server.js terima
+            const dataBooking = {
+                nama_pelanggan: document.getElementById('nama').value,
+                no_telefon: document.getElementById('telefon').value,
+                barber_id: document.getElementById('barber').value, // Kita hantar sebagai string/nama
+                tarikh: document.getElementById('tarikh').value,
+                slot_masa: document.getElementById('masa').value
+            };
+
+            console.log("Menghantar data:", dataBooking); // Untuk kita check kat console
+
             try {
-                // 1. Link mesti kena dengan route kat server.js (ada /admin)
-                const resp = await fetch('https://sistembarber-1.onrender.com/api/bookings');
-                const data = await resp.json();
-                
-                const tableBody = document.getElementById('bookingTable');
-                tableBody.innerHTML = ''; 
-
-                data.forEach(book => {
-                    // 2. Nama variable mesti sama dengan column kat Workbench (nama, masa, dll)
-                    const row = `<tr>
-                        <td>${book.nama}</td>
-                        <td>${book.no_telefon}</td>
-                        <td>${book.barber}</td>
-                        <td>Gunting Rambut</td> 
-                        <td>${new Date(book.tarikh).toLocaleDateString()}</td>
-                        <td>${book.masa}</td>
-                        <td><span class="status pending">Selesai</span></td>
-                    </tr>`;
-                    tableBody.innerHTML += row;
+                // 2. Hantar data ke Server Backend (API)
+                const response = await fetch('https://sistembarber-1.onrender.com/api/bookings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dataBooking)
                 });
-            } catch (err) {
-                console.error("Gagal tarik data:", err);
-            }
-        }
 
-        ambilData();
-        setInterval(ambilData, 30000);
+                const result = await response.json();
+
+                // 3. Respon kepada pengguna
+                if (result.success) {
+                    alert('🎉 ' + result.message);
+                    document.getElementById('bookingForm').reset(); // Kosongkan borang semula
+                } else {
+                    alert('❌ Gagal: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Gagal menyambung ke server backend. Pastikan server.js tengah RUN!');
+            }
+        });
     </script>
     
 </body>
