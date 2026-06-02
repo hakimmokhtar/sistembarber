@@ -56,7 +56,7 @@
                         <td>${book.servis || 'Gunting Rambut'}</td>
                         <td>${book.tarikh ? book.tarikh.split('T')[0] : ''}</td>
                         <td>${book.masa}</td>
-                        `<td style="color: ${warnaStatus}; font-weight: bold;">${statusSemasa}</td>`
+                        <td style="color: ${warnaStatus}; font-weight: bold;">${statusSemasa}</td>
                         <td>
                             ${statusSemasa === 'Pending' ? 
                                 `<button onclick="tukarStatus(${book.id}, 'Selesai')" style="background: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">Selesai</button>` 
