@@ -73,23 +73,24 @@
             }
         }
 
-function tukarStatus(id, statusBaru) {
-    if (confirm("Pelanggan ni dah setel potong rambut?")) {
-        fetch(`https://sistembarber-1.onrender.com/api/admin/bookings/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: statusBaru })
-        })
-        .then(res => res.json())
-        .then(result => {
-            if (result.success) {
-                alert("Status dikemaskini!");
-                location.reload(); // Refresh untuk susun semula senarai
+        function tukarStatus(id, statusBaru) {
+            if (confirm("Pelanggan ni dah setel potong rambut?")) {
+                fetch(`https://sistembarber-1.onrender.com/api/admin/bookings/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: statusBaru })
+                })
+                .then(res => res.json())
+                .then(result => {
+                    if (result.success) {
+                        alert("Status dikemaskini!");
+                        location.reload(); // Refresh untuk susun semula senarai
+                    }
+                })
+                .catch(err => console.error("Ralat update:", err));
             }
-        })
-        .catch(err => console.error("Ralat update:", err));
-    }
-}
+        }
+        
         ambilData();
         setInterval(ambilData, 30000);
     </script>
